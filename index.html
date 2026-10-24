@@ -102,12 +102,13 @@ nav .l a{position:relative;z-index:1;padding:7px 13px;border-radius:999px;transi
 .pf:has(img){padding:0}.pf:has(img) img{margin:0}
 @media(max-width:760px){.hg{grid-template-columns:1fr}.pf{width:min(62vw,240px)}}
 .cm .big{border-color:var(--g)}.cm .big strong{color:var(--g)}.cm strong span{font-weight:500;color:var(--mute);font-size:.85em}
+[hidden]{display:none!important}#adm[data-s=admin]::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#28C840;margin-left:8px}
 </style>
 </head>
 <body>
 <div id="sp" aria-hidden="true" style="position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)"></div>
 <div id="lang" role="switch" tabindex="0" aria-checked="false" aria-label="Language / ภาษา (TH/EN)" data-l="th"><i></i><button data-l="th" aria-pressed="true" tabindex="-1" aria-hidden="true">TH</button><button data-l="en" aria-pressed="false" tabindex="-1" aria-hidden="true">EN</button></div>
-<dialog id="adlg" aria-labelledby="adt"><h3 id="adt"></h3><p></p><button class="btn" type="button" data-act="reset"></button><button class="btn p" type="button" data-act="close"></button></dialog>
+<dialog id="adlg" aria-labelledby="adt"><h3 id="adt"></h3><p></p><button class="btn p" type="button" data-act="signin" hidden></button><button class="btn" type="button" data-act="signout" hidden></button><button class="btn" type="button" data-act="reset"></button><button class="btn p" type="button" data-act="close"></button></dialog>
 <nav><div class="w"><b>W. Petcharat</b><div class="l" id="nav"></div><button id="adm" type="button" aria-haspopup="dialog">Admin</button></div></nav>
 <main id="app"></main>
 
@@ -128,11 +129,18 @@ const CONFIG = {
     lineId: "0982015517",
     whatsapp: "https://wa.me/66982015517?s=p"
   },
+  supabase: { url:"https://tuuirpauydymcsagjhto.supabase.co", key:"sb_publishable_sdMRhQ6RKNQwEw75hhvoMA_y--Wp11D" }, // ค่าสาธารณะ ใส่ในเว็บได้ (ห้ามใส่ secret/service_role)
   photo: {img:"", alt:{th:"รูปโปรไฟล์ของ Watcharakorn (Big)",en:"Portrait of Watcharakorn (Big)"}, ph:{th:"[ADD PROFILE PHOTO] รูปแนวตั้ง 9:16",en:"[ADD PROFILE PHOTO] portrait 9:16"}},
   ui: {
     nav: { about:{th:"เกี่ยวกับ",en:"About"}, results:{th:"ผลลัพธ์",en:"Results"}, projects:{th:"โปรเจกต์",en:"Projects"}, exp:{th:"ประสบการณ์",en:"Experience"}, skills:{th:"ทักษะ",en:"Skills"}, contact:{th:"ติดต่อ",en:"Contact"} },
     viewProjects:{th:"ดูโปรเจกต์",en:"View projects"},
-    admin:{th:"แอดมิน",en:"Admin"}, adminTitle:{th:"พื้นที่แอดมิน",en:"Admin area"}, adminMsg:{th:"ระบบล็อกอินด้วย Google ยังไม่เชื่อมต่อ จะเปิดใช้ในขั้นตอนถัดไป ตอนนี้ปุ่มนี้ยังไม่ให้สิทธิ์แก้ไขอะไร",en:"Google sign-in is not connected yet and will be enabled in a later step. For now this button grants no editing access."}, resetPos:{th:"รีเซ็ตตำแหน่งปุ่ม",en:"Reset button positions"}, close:{th:"ปิด",en:"Close"}, resume:{th:"ดาวน์โหลดเรซูเม่",en:"Download resume"}, contactMe:{th:"ติดต่อผม",en:"Contact me"},
+    admin:{th:"แอดมิน",en:"Admin"}, adm:{
+      signin:{th:"เข้าสู่ระบบด้วย Google",en:"Sign in with Google"}, signout:{th:"ออกจากระบบ",en:"Sign out"},
+      out:{th:"เข้าสู่ระบบด้วย Google เพื่อจัดการเนื้อหา ผู้เข้าชมทั่วไปไม่ต้องล็อกอิน",en:"Sign in with Google to manage content. Visitors never need to sign in."},
+      admin:{th:"เข้าสู่ระบบแล้วด้วย {email} คุณเป็นแอดมิน เครื่องมือแก้ไขเนื้อหากำลังพัฒนา จะเปิดใช้ในขั้นตอนถัดไป",en:"Signed in as {email}. You are an admin. Editing tools are coming in the next step."},
+      denied:{th:"บัญชี {email} ไม่ได้รับอนุญาตให้เป็นแอดมิน จึงแก้ข้อมูลไม่ได้ ออกจากระบบแล้วลองบัญชีอื่นได้",en:"{email} is not authorized as an admin and cannot edit anything. Sign out and try another account."},
+      error:{th:"ตรวจสอบสิทธิ์ไม่สำเร็จ ลองใหม่อีกครั้ง",en:"Could not verify access. Please try again."},
+      offline:{th:"เชื่อมต่อ Supabase ไม่ได้ในหน้านี้ ระบบแอดมินใช้ได้เฉพาะบนเว็บจริง",en:"Cannot reach Supabase from this page. Admin works on the live site only."}}, adminTitle:{th:"พื้นที่แอดมิน",en:"Admin area"}, adminMsg:{th:"ระบบล็อกอินด้วย Google ยังไม่เชื่อมต่อ จะเปิดใช้ในขั้นตอนถัดไป ตอนนี้ปุ่มนี้ยังไม่ให้สิทธิ์แก้ไขอะไร",en:"Google sign-in is not connected yet and will be enabled in a later step. For now this button grants no editing access."}, resetPos:{th:"รีเซ็ตตำแหน่งปุ่ม",en:"Reset button positions"}, close:{th:"ปิด",en:"Close"}, resume:{th:"ดาวน์โหลดเรซูเม่",en:"Download resume"}, contactMe:{th:"ติดต่อผม",en:"Contact me"},
     resumePh:{th:"[ADD RESUME LINK] ยังไม่ได้ใส่ไฟล์",en:"[ADD RESUME LINK] not added yet"},
     labels:{ objective:{th:"เป้าหมาย",en:"Objective"}, context:{th:"บริบท",en:"Context"}, contrib:{th:"สิ่งที่ผมทำ",en:"My contribution"}, process:{th:"กระบวนการ",en:"Process"}, tools:{th:"เครื่องมือ",en:"Tools"}, result:{th:"ผลลัพธ์",en:"Results"}, skills:{th:"ทักษะที่ต่อยอดได้",en:"Transferable skills"} },
     sections:{ about:{th:"เกี่ยวกับผม",en:"About me"}, results:{th:"ผลลัพธ์ที่รายงาน",en:"Reported results"}, projects:{th:"โปรเจกต์เด่น",en:"Featured projects"}, exp:{th:"ประสบการณ์และการศึกษา",en:"Experience & education"}, skills:{th:"ทักษะและเครื่องมือ",en:"Skills & tools"}, contact:{th:"ติดต่อ",en:"Contact"} },
@@ -255,7 +263,7 @@ document.getElementById("lang").addEventListener("click",toggleLang);
 document.getElementById("lang").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleLang()}});
 render();
 /* ---- ปุ่มภาษาลอย: ลากได้ ดูดติดขอบ แตะตรงไหนก็สลับภาษา ---- */
-function ctl(){var a=document.getElementById("adm"),d=document.getElementById("adlg");a.textContent=L(U.admin);document.getElementById("lang").setAttribute("aria-checked",lang==="en");d.querySelector("h3").textContent=L(U.adminTitle);d.querySelector("p").textContent=L(U.adminMsg);d.querySelector("[data-act=reset]").textContent=L(U.resetPos);d.querySelector("[data-act=close]").textContent=L(U.close);if(window.layoutCtl)layoutCtl();if(window.navSpy)navSpy(true)}
+function ctl(){var a=document.getElementById("adm"),d=document.getElementById("adlg");a.textContent=L(U.admin);document.getElementById("lang").setAttribute("aria-checked",lang==="en");if(window.adminRender)adminRender();d.querySelector("[data-act=reset]").textContent=L(U.resetPos);d.querySelector("[data-act=close]").textContent=L(U.close);if(window.layoutCtl)layoutCtl();if(window.navSpy)navSpy(true)}
 (function(){
  var LNG=document.getElementById("lang"),ADM=document.getElementById("adm"),DLG=document.getElementById("adlg"),SP=document.getElementById("sp"),M=10,pos={},blocked=false;
  try{pos=JSON.parse(localStorage.getItem("uiPos2")||"{}")||{}}catch(e){pos={}}
@@ -289,6 +297,22 @@ function ctl(){var a=document.getElementById("adm"),d=document.getElementById("a
   if(cur!==last){last=cur;try{nav.scrollTo({left:a.offsetLeft-nav.clientWidth/2+a.offsetWidth/2,behavior:"smooth"})}catch(e){}}};
  function onS(){if(tick)return;tick=true;requestAnimationFrame(function(){tick=false;navSpy(false)})}
  addEventListener("scroll",onS,{passive:true});addEventListener("resize",onS);navSpy(true)})();
+(function(){var sb=null,S="out",email="",D=document.getElementById("adlg"),A=document.getElementById("adm");
+ var Q=CONFIG.ui.adm;
+ window.adminRender=function(){D.querySelector("h3").textContent=L(CONFIG.ui.adminTitle);D.querySelector("p").textContent=L(Q[S==="loading"?"out":S]).replace("{email}",email);
+  D.querySelector("[data-act=signin]").textContent=L(Q.signin);D.querySelector("[data-act=signout]").textContent=L(Q.signout);
+  D.querySelector("[data-act=signin]").hidden=!(S==="out"||S==="error");D.querySelector("[data-act=signout]").hidden=!(S==="admin"||S==="denied"||S==="error");
+  A.dataset.s=S};
+ async function check(){if(!sb){S="offline";adminRender();return}
+  try{var r=await sb.auth.getSession(),ses=r.data.session;if(!ses){S="out";email=""}else{email=ses.user.email||"";var q=await sb.rpc("is_admin");if(q.error)throw q.error;S=q.data===true?"admin":"denied"}}catch(e){S="error"}
+  adminRender();try{if(sessionStorage.getItem("admOpen")&&S!=="out"){sessionStorage.removeItem("admOpen");if(!D.open)D.showModal()}}catch(e){}}
+ function boot(){try{sb=supabase.createClient(CONFIG.supabase.url,CONFIG.supabase.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}catch(e){sb=null}
+  if(sb)sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_OUT"){S="out";email="";adminRender()}else setTimeout(check,0)});else check()}
+ try{var sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js";sc.async=true;sc.onload=boot;sc.onerror=function(){sb=null;check()};document.head.appendChild(sc)}catch(e){check()}
+ D.addEventListener("click",async function(e){var a=e.target.dataset&&e.target.dataset.act;if(!sb)return;
+  if(a==="signin"){try{sessionStorage.setItem("admOpen","1")}catch(x){}var r=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}});if(r.error){S="error";adminRender()}}
+  if(a==="signout"){await sb.auth.signOut()}});
+ adminRender()})();
 document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;const t=b.dataset.copy,s=b.querySelector("small"),o=s.textContent;const done=()=>{s.textContent=L(U.cm.copied);setTimeout(()=>{s.textContent=o},1500)};try{navigator.clipboard.writeText(t).then(done,done)}catch(x){done()}});
 </script>
 </body>
