@@ -103,12 +103,36 @@ nav .l a{position:relative;z-index:1;padding:7px 13px;border-radius:999px;transi
 @media(max-width:760px){.hg{grid-template-columns:1fr}.pf{width:min(62vw,240px)}}
 .cm .big{border-color:var(--g)}.cm .big strong{color:var(--g)}.cm strong span{font-weight:500;color:var(--mute);font-size:.85em}
 [hidden]{display:none!important}#adm[data-s=admin]::after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#28C840;margin-left:8px}
+#ap{position:fixed;inset:0;z-index:100;background:var(--bg);overflow-y:auto;padding-bottom:90px}
+#ap .tb{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;gap:8px;padding:calc(10px + env(safe-area-inset-top,0px)) 14px 10px;background:rgba(29,29,29,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#ap .btn{padding:10px 16px;font-size:14px;line-height:1.3}
+#aps{padding:10px 16px;font-size:14px;color:var(--mute);max-width:760px;margin:0 auto}
+#ab{padding:0 16px;max-width:760px;margin:0 auto}
+#ap details{border:1px solid var(--line);border-radius:8px;margin:10px 0;background:var(--card)}
+#ap details details{background:var(--bg)}
+#ap summary{padding:14px 16px;font-weight:600;cursor:pointer;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+#ap .sm{flex:1;min-width:0}
+#ap .in{padding:2px 16px 16px}
+#ap label{display:block;margin:12px 0 4px;font-size:13px;color:var(--mute)}
+#ap label.ck{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:15px}
+#ap input[type=text],#ap textarea,#ap select{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+#ap textarea{resize:vertical}
+#ap .g{margin-top:14px;padding-top:8px;border-top:1px dashed var(--line)}
+#ap .ctl{display:flex;gap:6px}
+#ap .ctl button,#ap .mini{min-width:44px;min-height:40px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;font:inherit;font-size:14px;cursor:pointer;padding:0 12px}
+#ap .mini{margin-top:10px}
+#ap .im img{max-width:160px;border-radius:6px;display:block;margin:8px 0}
+#ap .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#ap .us,#ap .mut{color:var(--mute);font-size:13px;display:block;margin-top:6px}
+#pv{position:fixed;left:0;right:0;bottom:0;z-index:120;display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(0,0,0,.85);backdrop-filter:blur(10px);border-top:1px solid var(--line);font-size:14px}
 </style>
 </head>
 <body>
 <div id="sp" aria-hidden="true" style="position:fixed;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)"></div>
 <div id="lang" role="switch" tabindex="0" aria-checked="false" aria-label="Language / ภาษา (TH/EN)" data-l="th"><i></i><button data-l="th" aria-pressed="true" tabindex="-1" aria-hidden="true">TH</button><button data-l="en" aria-pressed="false" tabindex="-1" aria-hidden="true">EN</button></div>
-<dialog id="adlg" aria-labelledby="adt"><h3 id="adt"></h3><p></p><button class="btn p" type="button" data-act="signin" hidden></button><button class="btn" type="button" data-act="signout" hidden></button><button class="btn" type="button" data-act="reset"></button><button class="btn p" type="button" data-act="close"></button></dialog>
+<div id="ap" hidden><div class="tb"><button class="btn" type="button" data-a="close">ปิด</button><button class="btn" type="button" data-a="prev">ดูตัวอย่าง</button><button class="btn" type="button" data-a="save">บันทึกฉบับร่าง</button><button class="btn p" type="button" data-a="pub">เผยแพร่</button></div><div id="aps" role="status"></div><div id="ab"></div></div>
+<div id="pv" hidden><span>กำลังดูตัวอย่าง (ยังไม่เผยแพร่)</span><button class="btn p" type="button" data-a="back">กลับไปแก้ไข</button></div>
+<dialog id="adlg" aria-labelledby="adt"><h3 id="adt"></h3><p></p><button class="btn p" type="button" data-act="edit" hidden></button><button class="btn p" type="button" data-act="signin" hidden></button><button class="btn" type="button" data-act="signout" hidden></button><button class="btn" type="button" data-act="reset"></button><button class="btn p" type="button" data-act="close"></button></dialog>
 <nav><div class="w"><b>W. Petcharat</b><div class="l" id="nav"></div><button id="adm" type="button" aria-haspopup="dialog">Admin</button></div></nav>
 <main id="app"></main>
 
@@ -135,9 +159,9 @@ const CONFIG = {
     nav: { about:{th:"เกี่ยวกับ",en:"About"}, results:{th:"ผลลัพธ์",en:"Results"}, projects:{th:"โปรเจกต์",en:"Projects"}, exp:{th:"ประสบการณ์",en:"Experience"}, skills:{th:"ทักษะ",en:"Skills"}, contact:{th:"ติดต่อ",en:"Contact"} },
     viewProjects:{th:"ดูโปรเจกต์",en:"View projects"},
     admin:{th:"แอดมิน",en:"Admin"}, adm:{
-      signin:{th:"เข้าสู่ระบบด้วย Google",en:"Sign in with Google"}, signout:{th:"ออกจากระบบ",en:"Sign out"},
+      signin:{th:"เข้าสู่ระบบด้วย Google",en:"Sign in with Google"}, signout:{th:"ออกจากระบบ",en:"Sign out"}, edit:{th:"เปิดเครื่องมือแก้ไข",en:"Open editor"},
       out:{th:"เข้าสู่ระบบด้วย Google เพื่อจัดการเนื้อหา ผู้เข้าชมทั่วไปไม่ต้องล็อกอิน",en:"Sign in with Google to manage content. Visitors never need to sign in."},
-      admin:{th:"เข้าสู่ระบบแล้วด้วย {email} คุณเป็นแอดมิน เครื่องมือแก้ไขเนื้อหากำลังพัฒนา จะเปิดใช้ในขั้นตอนถัดไป",en:"Signed in as {email}. You are an admin. Editing tools are coming in the next step."},
+      admin:{th:"เข้าสู่ระบบแล้วด้วย {email} คุณเป็นแอดมิน ",en:"Signed in as {email}. You are an admin. "},
       denied:{th:"บัญชี {email} ไม่ได้รับอนุญาตให้เป็นแอดมิน จึงแก้ข้อมูลไม่ได้ ออกจากระบบแล้วลองบัญชีอื่นได้",en:"{email} is not authorized as an admin and cannot edit anything. Sign out and try another account."},
       error:{th:"ตรวจสอบสิทธิ์ไม่สำเร็จ ลองใหม่อีกครั้ง",en:"Could not verify access. Please try again."},
       offline:{th:"เชื่อมต่อ Supabase ไม่ได้ในหน้านี้ ระบบแอดมินใช้ได้เฉพาะบนเว็บจริง",en:"Cannot reach Supabase from this page. Admin works on the live site only."}}, adminTitle:{th:"พื้นที่แอดมิน",en:"Admin area"}, adminMsg:{th:"ระบบล็อกอินด้วย Google ยังไม่เชื่อมต่อ จะเปิดใช้ในขั้นตอนถัดไป ตอนนี้ปุ่มนี้ยังไม่ให้สิทธิ์แก้ไขอะไร",en:"Google sign-in is not connected yet and will be enabled in a later step. For now this button grants no editing access."}, resetPos:{th:"รีเซ็ตตำแหน่งปุ่ม",en:"Reset button positions"}, close:{th:"ปิด",en:"Close"}, resume:{th:"ดาวน์โหลดเรซูเม่",en:"Download resume"}, contactMe:{th:"ติดต่อผม",en:"Contact me"},
@@ -168,7 +192,7 @@ const CONFIG = {
     note:{th:"ตัวเลขเป็นผลที่ผู้สมัครรายงาน ยังไม่ได้ยืนยันจากข้อมูลวิเคราะห์ และเป็นผลของช่องและเว็บไซต์บริษัท ไม่ได้มาจากผมคนเดียว ผมริเริ่มช่อง TikTok และเขียนบทความ SEO",en:"Figures are self-reported, not verified from analytics, and belong to the company's account and website, not to me alone. I helped start the TikTok account and wrote the SEO article."}
   },
   projects:[
-    { title:{th:"TikTok: ริเริ่มช่องและวางเนื้อหา",en:"TikTok: starting the account and shaping content"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
+    { status:"published", featured:false, category:"tiktok-content", title:{th:"TikTok: ริเริ่มช่องและวางเนื้อหา",en:"TikTok: starting the account and shaping content"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
       objective:{th:"แนะนำสินค้า Primus ให้คนทั่วไปที่ไม่มีความรู้เฉพาะทางเข้าใจ และขยายฐานลูกค้า",en:"Help people without technical knowledge understand Primus products, and widen the customer base."},
       context:{th:"ช่องเริ่มจากศูนย์ สินค้าค่อนข้างเฉพาะทาง คนทั่วไปเข้าใจยาก",en:"The account started from zero, and the products are fairly technical for a general audience."},
       contrib:{th:"ริเริ่มเปิดช่อง TikTok ของ Primus และสร้างวิดีโอสั้นให้คนทั่วไปเข้าใจตัวสินค้า",en:"Helped start the Primus TikTok account and created short-form videos that explain the products to everyday viewers."},
@@ -178,7 +202,7 @@ const CONFIG = {
       skills:{th:"เข้าใจกลุ่มผู้ชม · พัฒนาเนื้อหา · แก้ปัญหาเชิงสร้างสรรค์",en:"Audience understanding · content development · creative problem-solving"},
       evidence:{img:"",alt:{th:"หน้าช่อง TikTok ของ Primus",en:"Primus TikTok account page"},ph:{th:"[ADD PROJECT IMAGE] ภาพหน้าช่องและคลิปที่ดีที่สุด",en:"[ADD PROJECT IMAGE] account page and top video"},
         links:[{l:{th:"คลิปที่ยอดวิวสูงสุด",en:"Top video"},u:"https://vt.tiktok.com/ZSgUteLCr/"},{l:{th:"ตัวอย่างสไตล์เนื้อหา",en:"Content style example"},u:"https://vt.tiktok.com/ZSgUt1unm/"},{l:{th:"หน้าช่อง (การเติบโต)",en:"Account page (growth)"},u:"https://www.tiktok.com/@primusthai1?_r=1&_t=ZS-9Ak9OjJE8UH"}]} },
-    { title:{th:"SEO: บทความความรู้ที่ติดหน้าแรก",en:"SEO: a knowledge article on page one"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
+    { status:"published", featured:false, category:"digital-marketing-seo", title:{th:"SEO: บทความความรู้ที่ติดหน้าแรก",en:"SEO: a knowledge article on page one"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
       objective:{th:"ทำให้ลูกค้าที่ค้นหาปัญหาเรื่องปั๊มน้ำและการควบคุมปั๊ม เจอเนื้อหาของ Primus",en:"Help customers searching for pump and pump-control problems find Primus content."},
       context:{th:"เขียนบทความ SEO หลายชิ้น มี 1 ชิ้นเป็นบทความความรู้ เรื่องถังเก็บน้ำใกล้แห้งแต่ปั๊มยังไม่ทำงาน",en:"I wrote several SEO articles; one is a knowledge article on a water tank nearly dry while the pump has not started."},
       contrib:{th:"วิจัยตลาดและคู่แข่ง ค้นหาคีย์เวิร์ด และเขียนบทความ SEO",en:"Researched the market and competitors, found keywords and wrote the SEO articles."},
@@ -188,7 +212,7 @@ const CONFIG = {
       skills:{th:"วิจัยตลาดและคู่แข่ง · เข้าใจเจตนาของผู้ค้นหา · เขียนเพื่อสื่อสารเรื่องเทคนิค",en:"Market and competitor research · search-intent thinking · explaining technical topics"},
       evidence:{img:"",alt:{th:"ภาพผลการค้นหา Google",en:"Google search result screenshot"},ph:{th:"[ADD PROJECT IMAGE] ภาพผลการค้นหาและหน้าบทความ",en:"[ADD PROJECT IMAGE] search result and article page"},
         links:[{l:{th:"ผลการค้นหา Google",en:"Google results"},u:"https://www.google.com/search?q=transfer+pump+controller&hl=th"},{l:{th:"เนื้อหาบทความ",en:"The article"},u:"https://www.primus.co.th/en/knowledge/article/3/1,5,4/8/%E0%B8%96%E0%B8%B1%E0%B8%87%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%9A%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B9%83%E0%B8%81%E0%B8%A5%E0%B9%89%E0%B9%81%E0%B8%AB%E0%B9%89%E0%B8%87-%E0%B9%81%E0%B8%95%E0%B9%88%E0%B8%9B%E0%B8%B1%E0%B9%8A%E0%B8%A1%E0%B8%A2%E0%B8%B1%E0%B8%87%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%97%E0%B8%B3%E0%B8%87%E0%B8%B2%E0%B8%99%E2%80%A6%E0%B9%80%E0%B8%81%E0%B8%B4%E0%B8%94%E0%B8%AD%E0%B8%B0%E0%B9%84%E0%B8%A3%E0%B8%82%E0%B8%B6%E0%B9%89%E0%B8%99%3F"},{l:{th:"สินค้าที่เชื่อมกับบทความ",en:"Linked product page"},u:"https://www.primus.co.th/en/products/categories/sub/5/series/7/detail/108"}]} },
-    { title:{th:"คอนเทนต์สินค้าด้วย AI ช่วยผลิต และแบนเนอร์",en:"AI-assisted product content and banners"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
+    { status:"published", featured:false, category:"ai-content", title:{th:"คอนเทนต์สินค้าด้วย AI ช่วยผลิต และแบนเนอร์",en:"AI-assisted product content and banners"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
       objective:{th:"ผลิตภาพ วิดีโอ และแบนเนอร์สินค้า เพื่อใช้ในงานการตลาด",en:"Produce product images, video and banners for marketing use."},
       context:{th:"[ADD บริบท เช่น สินค้าตัวไหน ใช้ช่องทางอะไร]",en:"[ADD CONTEXT, e.g. which product, which channel]"},
       contrib:{th:"ผลิตภาพและวิดีโอด้วย AI ช่วย และทำแบนเนอร์โปรโมตสินค้า",en:"Produced AI-assisted images and video, and made product promo banners."},
@@ -197,7 +221,7 @@ const CONFIG = {
       result:{th:"[ADD ผลลัพธ์ ถ้ามี] ยังไม่มีตัวเลขที่ยืนยัน",en:"[ADD RESULT IF ANY] No verified figures yet."},
       skills:{th:"ผลิตงานสร้างสรรค์ด้วยเครื่องมือ AI · ปรับงานตามโจทย์",en:"Producing creative work with AI tools · refining to a brief"},
       evidence:{img:"",alt:{th:"ตัวอย่างงานภาพ/วิดีโอ AI",en:"AI image/video sample"},ph:{th:"[ADD PROJECT IMAGE] ตัวอย่างงานที่เปิดเผยได้",en:"[ADD PROJECT IMAGE] shareable sample work"},links:[]} },
-    { title:{th:"งานอีเวนต์ Metalex 2025 ที่บูท Primus",en:"Metalex 2025 event, Primus booth"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
+    { status:"published", featured:false, category:"events", title:{th:"งานอีเวนต์ Metalex 2025 ที่บูท Primus",en:"Metalex 2025 event, Primus booth"}, tag:{th:"Primus Co., Ltd. · ฝึกงาน",en:"Primus Co., Ltd. · Internship"},
       objective:{th:"สนับสนุนการนำเสนอสินค้า Primus ต่อผู้เข้าชมงาน",en:"Support the presentation of Primus products to event visitors."},
       context:{th:"บูทของ Primus ในงาน Metalex 2025 [VERIFY วันที่ที่ไปประจำบูท]",en:"Primus booth at Metalex 2025 [VERIFY DATES YOU WORKED THE BOOTH]"},
       contrib:{th:"ออกงานเป็นผู้ช่วยเจ้าหน้าที่ประจำบูท [ADD หน้าที่ที่ทำจริง]",en:"Worked as an assistant to the booth staff [ADD YOUR ACTUAL TASKS]"},
@@ -222,6 +246,7 @@ const CONFIG = {
   contactHead:{th:"สนใจร่วมงาน โปรเจกต์ หรือความร่วมมือ ติดต่อมาได้เลย",en:"Open to job opportunities, projects and collaboration. Get in touch."}
 };
 
+const CATS={"digital-marketing-seo":{th:"Digital Marketing และ SEO",en:"Digital Marketing & SEO"},"tiktok-content":{th:"TikTok และการสร้างคอนเทนต์",en:"TikTok & Content Creation"},"ai-content":{th:"คอนเทนต์ที่ใช้ AI ช่วย",en:"AI-assisted Content"},"business-research":{th:"ธุรกิจและวิจัยตลาด",en:"Business & Market Research"},"events":{th:"งานอีเวนต์และนิทรรศการ",en:"Events & Exhibition Support"},"other":{th:"อื่นๆ",en:"Other"}};
 /* ---------- ส่วนแสดงผล (ไม่ต้องแก้) / RENDER CODE ---------- */
 let lang="th"; try{lang=localStorage.getItem("lang")||"th"}catch(e){}
 const L=o=>typeof o==="string"?o:(o[lang]||"");
@@ -234,9 +259,9 @@ function render(){
  document.getElementById("nav").innerHTML='<span id="nb"></span>'+Object.keys(U.nav).map(k=>`<a href="#${k}">${L(U.nav[k])}</a>`).join("");
  const resume=C.resumeUrl?`<a class="btn" href="${C.resumeUrl}" download>${L(U.resume)}</a>`:`<span class="btn" role="link" aria-disabled="true" title="${L(U.resume)}">${L(U.resume)}<br><small>${T(U.resumePh)}</small></span>`;
  const m=C.results.metrics.map(x=>`<div><strong>${L(x.n)}</strong><span>${T(x.l)}</span></div>`).join("");
- const cases=C.projects.map(p=>{const e=p.evidence,rows=[["objective",p.objective],["context",p.context],["contrib",p.contrib]].map(([k,v])=>`<dt>${L(U.labels[k])}</dt><dd>${T(v)}</dd>`).join("");
+ const cases=C.projects.filter(p=>window.PREVIEW||p.status!=="draft").slice().sort((a,b)=>(b.featured?1:0)-(a.featured?1:0)).map(p=>{const e=p.evidence,rows=[["objective",p.objective],["context",p.context],["contrib",p.contrib]].map(([k,v])=>`<dt>${L(U.labels[k])}</dt><dd>${T(v)}</dd>`).join("");
   const lk=(e.links||[]).map(x=>`<a href="${x.u}" target="_blank" rel="noopener">${L(x.l)}</a>`).join("");
-  return `<article class="case"><div class="ev"><div class="evb">${e.img?`<img src="${e.img}" alt="${L(e.alt)}" loading="lazy">`:T(e.ph)}${lk?`<div class="evl">${lk}</div>`:""}</div></div><div><h3>${L(p.title)}</h3><span class="tag">${L(p.tag)}</span><dl class="dl">${rows}<dt>${L(U.labels.process)}</dt><dd><ul>${p.process.map(s=>`<li>${T(s)}</li>`).join("")}</ul></dd><dt>${L(U.labels.tools)}</dt><dd>${T(p.tools)}</dd><dt>${L(U.labels.result)}</dt><dd>${T(p.result)}</dd></dl><p class="sx"><b>${L(U.labels.skills)}:</b> ${L(p.skills)}</p></div></article>`}).join("");
+  return `<article class="case"><div class="ev"><div class="evb">${e.img?`<img src="${e.img}" alt="${L(e.alt)}" loading="lazy">`:T(e.ph)}${lk?`<div class="evl">${lk}</div>`:""}</div></div><div><h3>${L(p.title)}</h3><span class="tag">${window.PREVIEW&&p.status==="draft"?ph("[DRAFT] "):""}${p.featured?"★ ":""}${L(p.tag)}${CATS[p.category]&&p.category!=="other"?" · "+L(CATS[p.category]):""}</span><dl class="dl">${rows}<dt>${L(U.labels.process)}</dt><dd><ul>${p.process.map(s=>`<li>${T(s)}</li>`).join("")}</ul></dd><dt>${L(U.labels.tools)}</dt><dd>${T(p.tools)}</dd><dt>${L(U.labels.result)}</dt><dd>${T(p.result)}</dd></dl><p class="sx"><b>${L(U.labels.skills)}:</b> ${L(p.skills)}</p></div></article>`}).join("");
  const K=C.contact,cm=U.cm,tools=C.tools,toolsHtml=`<div class="tools"><h3>${L(tools.h)}</h3><ul class="sk" style="display:block;padding-left:1.1em;margin:0;color:var(--mute)">${tools.items.map(i=>`<li>${L(i)}</li>`).join("")}<li>${T(tools.ph)}</li></ul></div>`;
  const cmHtml=`<div class="cm"><a class="big" href="tel:${K.phone}"><small>${L(cm.phone)} · ${L(cm.call)}</small><strong>${K.phoneShow} <span>(${K.nick})</span></strong></a><button type="button" data-copy="${K.lineId}"><small>${L(cm.line)} · ${L(cm.copy)}</small><strong>${K.lineId}</strong></button><a href="${K.whatsapp}" target="_blank" rel="noopener"><small>${L(cm.wa)} · ${L(cm.open)}</small><strong>${K.phoneShow}</strong></a></div>`;
  const tl=C.experience.map(x=>`<article><h3>${L(x.t)}</h3><small>${L(x.o)} · ${T(x.d)}</small>${x.b.length?`<ul>${x.b.map(b=>`<li>${L(b)}</li>`).join("")}</ul>`:""}</article>`).join("");
@@ -302,17 +327,88 @@ function ctl(){var a=document.getElementById("adm"),d=document.getElementById("a
  window.adminRender=function(){D.querySelector("h3").textContent=L(CONFIG.ui.adminTitle);D.querySelector("p").textContent=L(Q[S==="loading"?"out":S]).replace("{email}",email);
   D.querySelector("[data-act=signin]").textContent=L(Q.signin);D.querySelector("[data-act=signout]").textContent=L(Q.signout);
   D.querySelector("[data-act=signin]").hidden=!(S==="out"||S==="error");D.querySelector("[data-act=signout]").hidden=!(S==="admin"||S==="denied"||S==="error");
-  A.dataset.s=S};
+  var eb=D.querySelector("[data-act=edit]");eb.textContent=L(Q.edit);eb.hidden=S!=="admin";window.ADMIN_OK=S==="admin";A.dataset.s=S};
  async function check(){if(!sb){S="offline";adminRender();return}
   try{var r=await sb.auth.getSession(),ses=r.data.session;if(!ses){S="out";email=""}else{email=ses.user.email||"";var q=await sb.rpc("is_admin");if(q.error)throw q.error;S=q.data===true?"admin":"denied"}}catch(e){S="error"}
   adminRender();try{if(sessionStorage.getItem("admOpen")&&S!=="out"){sessionStorage.removeItem("admOpen");if(!D.open)D.showModal()}}catch(e){}}
  function boot(){try{sb=supabase.createClient(CONFIG.supabase.url,CONFIG.supabase.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})}catch(e){sb=null}
+  window.SB=sb;if(sb&&window.onSB)onSB();
   if(sb)sb.auth.onAuthStateChange(function(ev){if(ev==="SIGNED_OUT"){S="out";email="";adminRender()}else setTimeout(check,0)});else check()}
  try{var sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js";sc.async=true;sc.onload=boot;sc.onerror=function(){sb=null;check()};document.head.appendChild(sc)}catch(e){check()}
  D.addEventListener("click",async function(e){var a=e.target.dataset&&e.target.dataset.act;if(!sb)return;
   if(a==="signin"){try{sessionStorage.setItem("admOpen","1")}catch(x){}var r=await sb.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+location.pathname}});if(r.error){S="error";adminRender()}}
   if(a==="signout"){await sb.auth.signOut()}});
  adminRender()})();
+/* ===== โหมดแอดมิน: แก้ไขข้อความ/รูป ดูตัวอย่าง บันทึกร่าง เผยแพร่ ===== */
+(function(){
+ var AP=document.getElementById("ap"),AB=document.getElementById("ab"),AS=document.getElementById("aps"),PV=document.getElementById("pv"),W=null,LIVE=null,OPEN={},dirty=false,busy=false,tm;
+ var ORDER=["hero","about","results","projects","experience","skills","tools","photo","contact","contactHead","resumeUrl","name","email","ui"];
+ var TL={hero:"หน้าแรก (Hero)",about:"เกี่ยวกับผม",results:"ผลลัพธ์ที่รายงาน",projects:"โปรเจกต์",experience:"ประสบการณ์และการศึกษา",skills:"ทักษะ",tools:"เครื่องมือที่ใช้จริง",photo:"รูปโปรไฟล์",contact:"ช่องทางติดต่อ",contactHead:"หัวข้อส่วนติดต่อ",resumeUrl:"ลิงก์เรซูเม่",name:"ชื่อ",email:"อีเมล",ui:"ข้อความปุ่ม หัวข้อ และอินเทอร์เฟซ"};
+ var LB={txt:"ข้อความ",title:"ชื่อเรื่อง",intro:"คำแนะนำตัว",roles:"ความสามารถหลัก",status:"สถานะ",featured:"โปรเจกต์เด่น (แสดงก่อน)",category:"หมวดหมู่",p:"ย่อหน้า",strengths:"จุดแข็ง",metrics:"ตัวเลขเด่น",n:"ตัวเลข/ข้อความใหญ่",l:"คำอธิบาย",note:"หมายเหตุ",tag:"แท็ก (บริษัท/ประเภทงาน)",objective:"เป้าหมาย",context:"บริบท",contrib:"สิ่งที่ผมทำ",process:"กระบวนการ",tools:"เครื่องมือ",result:"ผลลัพธ์",skills:"ทักษะที่ต่อยอดได้",evidence:"หลักฐาน/รูป/ลิงก์",links:"ลิงก์",u:"URL",img:"รูปภาพ",alt:"คำอธิบายรูป (alt)",ph:"ข้อความแทนรูปที่ยังไม่มี",t:"ตำแหน่ง/สาขา",o:"องค์กร",d:"ช่วงเวลา",b:"รายละเอียด",c:"หมวดทักษะ",items:"รายการ",h:"หัวข้อ",phone:"เบอร์โทร (ใช้ในลิงก์โทร)",phoneShow:"เบอร์โทร (แสดงผล)",nick:"ชื่อเล่น",lineId:"LINE ID",whatsapp:"ลิงก์ WhatsApp"};
+ var LONG={p:1,intro:1,note:1,context:1,objective:1,contrib:1,result:1};
+ function lab(k){return LB[k]||k}
+ function cl(x){return JSON.parse(JSON.stringify(x))}
+ function isO(x){return x&&typeof x==="object"&&!Array.isArray(x)}
+ function mg(a,b){if(isO(a)&&isO(b)){for(var k in b)a[k]=mg(a[k],b[k]);return a}return b}
+ function snap(){var c=cl(CONFIG);delete c.supabase;return c}
+ function applyData(d){d=cl(d);delete d.supabase;mg(CONFIG,d)}
+ function gp(p){return p.split("/").reduce(function(o,k){return o[k]},W)}
+ function sp(p,v){var a=p.split("/"),l=a.pop();a.reduce(function(o,k){return o[k]},W)[l]=v}
+ function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+ function isBi(o){var k=Object.keys(o);return k.length===2&&typeof o.th==="string"&&typeof o.en==="string"}
+ function st(m,err){AS.textContent=m;AS.style.color=err?"#ff8a7a":""}
+ function touch(){dirty=true;st("มีการแก้ไขที่ยังไม่ได้บันทึก");clearTimeout(tm);tm=setTimeout(function(){try{localStorage.setItem("admW",JSON.stringify(W))}catch(e){}},500)}
+ function pv(x){if(typeof x==="string")return x.slice(0,36);if(isO(x)){if(typeof x.th==="string"&&x.th)return x.th.slice(0,36);var pri=["title","t","c","l","n","u"];for(var i=0;i<pri.length;i++){if(x[pri[i]]){var r=pv(x[pri[i]]);if(r)return r}}}return ""}
+ function inp(path,val,tx){return tx?'<textarea data-p="'+path+'" rows="'+Math.min(8,Math.max(3,Math.ceil(val.length/40)))+'">'+esc(val)+'</textarea>':'<input type="text" data-p="'+path+'" value="'+esc(val)+'">'}
+ function opts(list,v){return list.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===v?" selected":"")+'>'+o[1]+'</option>'}).join("")}
+ function prim(v,p,k){var ps=p.join("/"),l='<label>'+lab(k||"txt")+'</label>';
+  if(k==="img")return l+'<div class="im">'+(v?'<img src="'+esc(v)+'" alt="">':'<span class="mut">ยังไม่มีรูป</span>')+'<div class="row"><label class="btn up">เลือกรูป<input type="file" accept="image/jpeg,image/png,image/webp" data-up="'+ps+'" hidden></label>'+(v?'<button type="button" class="mini" data-op="clr" data-p="'+ps+'">ลบรูปออกจากโปรเจกต์</button>':"")+'</div><small class="us" data-us="'+ps+'">JPEG/PNG/WebP ไม่เกิน 5 MB</small></div>';
+  if(k==="status")return l+'<select data-p="'+ps+'">'+opts([["published","เผยแพร่"],["draft","ฉบับร่าง (ไม่แสดงสาธารณะ)"]],v)+'</select>';
+  if(k==="category")return l+'<select data-p="'+ps+'">'+opts(Object.keys(CATS).map(function(c){return [c,CATS[c].th]}),v)+'</select>';
+  if(typeof v==="boolean")return '<label class="ck"><input type="checkbox" data-p="'+ps+'"'+(v?" checked":"")+'> '+lab(k)+'</label>';
+  return l+inp(ps,String(v),LONG[k]||String(v).length>60)}
+ function fld(v,p,k){var ps=p.join("/");
+  if(Array.isArray(v))return '<div class="arr">'+v.map(function(it,i){var q=ps+"/"+i;return '<details data-k="'+q+'"'+(OPEN[q]?" open":"")+'><summary><span class="sm">'+(i+1)+'. '+esc(pv(it)||"(ว่าง)")+'</span><span class="ctl">'+[["up","↑"],["dn","↓"],["del","✕"]].map(function(o){return '<button type="button" data-op="'+o[0]+'" data-p="'+ps+'" data-i="'+i+'">'+o[1]+'</button>'}).join("")+'</span></summary><div class="in">'+fld(it,p.concat(i),"")+'</div></details>'}).join("")+'<button type="button" class="mini" data-op="add" data-p="'+ps+'">+ เพิ่มรายการ</button></div>';
+  if(isO(v)){if(isBi(v)){var tx=LONG[k]||v.th.length>60||v.en.length>60,n=lab(k||"txt");return '<div class="bi"><label>'+n+' · ไทย</label>'+inp(ps+"/th",v.th,tx)+'<label>'+n+' · English</label>'+inp(ps+"/en",v.en,tx)+'</div>'}
+   return Object.keys(v).map(function(c){var x=v[c];return (isO(x)||Array.isArray(x))?'<div class="g"><b>'+lab(c)+'</b>'+fld(x,p.concat(c),c)+'</div>':prim(x,p.concat(c),c)}).join("")}
+  return prim(v,p,k)}
+ function rb(){var y=AP.scrollTop;AB.innerHTML=ORDER.filter(function(k){return k in W}).map(function(k){return '<details data-k="'+k+'"'+(OPEN[k]?" open":"")+'><summary>'+TL[k]+'</summary><div class="in">'+fld(W[k],[k],k)+'</div></details>'}).join("");AP.scrollTop=y}
+ function blank(x,k){if(typeof x==="string")return k==="status"?"draft":k==="category"?"other":"";if(typeof x==="boolean")return false;if(Array.isArray(x))return [];if(isO(x)){var o={};for(var c in x)o[c]=blank(x[c],c);return o}return ""}
+ function tpl(a,key){if(a.length)return blank(a[a.length-1],key);return key==="links"?{l:{th:"",en:""},u:""}:{th:"",en:""}}
+ async function openP(){if(!window.ADMIN_OK||!window.SB)return;document.getElementById("adlg").close();LIVE=snap();AP.hidden=false;document.body.style.overflow="hidden";st("กำลังโหลดฉบับร่าง...");
+  var base=snap();try{var r=await SB.from("site_content").select("data").eq("id","draft").maybeSingle();if(r.error)throw r.error;if(r.data&&r.data.data){base=mg(base,cl(r.data.data));delete base.supabase}}catch(e){st("โหลดฉบับร่างไม่ได้: "+(e.message||e),1)}
+  W=base;dirty=false;try{var b=localStorage.getItem("admW");if(b&&b!==JSON.stringify(W)&&confirm("พบฉบับแก้ไขที่ยังไม่ได้บันทึกในเครื่องนี้ ต้องการใช้ฉบับนั้นต่อไหม")){W=JSON.parse(b);dirty=true}}catch(e){}
+  rb();if(!dirty)st("พร้อมแก้ไข")}
+ async function sv(){if(busy)return false;busy=true;st("กำลังบันทึก...");try{var r=await SB.from("site_content").upsert({id:"draft",data:W});if(r.error)throw r.error;dirty=false;try{localStorage.removeItem("admW")}catch(e){}st("บันทึกฉบับร่างแล้ว ✓");return true}catch(x){st("บันทึกไม่สำเร็จ: "+(x.message||x)+" ข้อมูลยังอยู่ในหน้านี้และสำรองไว้ในเครื่อง ลองกดบันทึกอีกครั้ง",1);return false}finally{busy=false}}
+ async function pb(){if(!confirm("เผยแพร่ตอนนี้ ผู้เข้าชมทุกคนจะเห็นเนื้อหานี้ (โปรเจกต์ที่เป็นฉบับร่างจะไม่ถูกเผยแพร่) ดำเนินการต่อไหม"))return;if(!(await sv()))return;busy=true;st("กำลังเผยแพร่...");
+  try{var P=cl(W);P.projects=(P.projects||[]).filter(function(p){return p.status!=="draft"});var r=await SB.from("site_content").upsert({id:"published",data:P});if(r.error)throw r.error;LIVE=cl(P);applyData(P);render();st("เผยแพร่แล้ว ✓ ผู้เข้าชมจะเห็นเนื้อหานี้")}catch(x){st("เผยแพร่ไม่สำเร็จ: "+(x.message||x)+" (ฉบับร่างบันทึกไว้แล้ว)",1)}finally{busy=false}}
+ AB.addEventListener("input",function(e){var t=e.target;if(t.dataset.p){sp(t.dataset.p,t.type==="checkbox"?t.checked:t.value);touch()}});
+ AB.addEventListener("change",async function(e){var t=e.target;
+  if(t.dataset.p){sp(t.dataset.p,t.type==="checkbox"?t.checked:t.value);touch();return}
+  if(!t.dataset.up)return;var f=t.files[0];if(!f)return;var ps=t.dataset.up,us=AB.querySelector('[data-us="'+ps+'"]');
+  if(["image/jpeg","image/png","image/webp"].indexOf(f.type)<0){us.textContent="รองรับเฉพาะ JPEG, PNG, WebP";return}
+  if(f.size>5*1024*1024){us.textContent="ไฟล์ใหญ่เกิน 5 MB";return}
+  var pr=t.closest(".im").querySelector("img");if(pr)pr.src=URL.createObjectURL(f);us.textContent="กำลังอัปโหลด...";
+  var ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[f.type],id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random().toString(36).slice(2),path="images/"+id+"."+ext;
+  try{var r=await SB.storage.from("portfolio").upload(path,f,{contentType:f.type,cacheControl:"31536000"});if(r.error)throw r.error;sp(ps,SB.storage.from("portfolio").getPublicUrl(path).data.publicUrl);touch();rb();st("อัปโหลดรูปสำเร็จ (ยังไม่ได้บันทึกฉบับร่าง)")}catch(x){us.textContent="อัปโหลดไม่สำเร็จ: "+(x.message||x)+" (รูปเดิมยังอยู่)"}});
+ AB.addEventListener("click",function(e){var b=e.target.closest("[data-op]");if(!b)return;e.preventDefault();var o=b.dataset.op,p=b.dataset.p,i=+b.dataset.i;
+  if(o==="clr"){sp(p,"");touch();rb();return}
+  var a=gp(p);
+  if(o==="add"){a.push(tpl(a,p.split("/").pop()));OPEN[p+"/"+(a.length-1)]=true}
+  if(o==="del"){if(!confirm("ลบรายการนี้ใช่ไหม"))return;a.splice(i,1)}
+  if(o==="up"&&i>0){var t=a[i];a[i]=a[i-1];a[i-1]=t}
+  if(o==="dn"&&i<a.length-1){var u=a[i];a[i]=a[i+1];a[i+1]=u}
+  touch();rb()});
+ AB.addEventListener("toggle",function(e){var d=e.target;if(d.dataset&&d.dataset.k)OPEN[d.dataset.k]=d.open},true);
+ document.addEventListener("click",function(e){var a=e.target.dataset&&e.target.dataset.a,x=e.target.dataset&&e.target.dataset.act;
+  if(x==="edit")openP();
+  if(a==="close"){if(dirty&&!confirm("มีการแก้ไขที่ยังไม่ได้บันทึก ปิดเลยไหม (ระบบสำรองไว้ในเครื่องนี้ให้)"))return;AP.hidden=true;document.body.style.overflow=""}
+  if(a==="save")sv();if(a==="pub")pb();
+  if(a==="prev"){AP.hidden=true;document.body.style.overflow="";PV.hidden=false;window.PREVIEW=true;applyData(W);render();scrollTo(0,0)}
+  if(a==="back"){PV.hidden=true;window.PREVIEW=false;applyData(LIVE);render();AP.hidden=false;document.body.style.overflow="hidden"}});
+ window.onSB=async function(){try{var r=await SB.from("site_content").select("data").eq("id","published").maybeSingle();if(r.data&&r.data.data&&!window.PREVIEW){applyData(r.data.data);render()}}catch(e){}};
+ if(window.SB&&window.onSB)onSB();
+})();
 document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;const t=b.dataset.copy,s=b.querySelector("small"),o=s.textContent;const done=()=>{s.textContent=L(U.cm.copied);setTimeout(()=>{s.textContent=o},1500)};try{navigator.clipboard.writeText(t).then(done,done)}catch(x){done()}});
 </script>
 </body>
